@@ -10,6 +10,11 @@
     border: 1px solid #000000;
 }
 
+.pointer {
+    padding: 2px 0px;
+    background-color: #000000;
+}
+
 @media print {
     body {
         margin: 20px 30px;
