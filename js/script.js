@@ -19,14 +19,20 @@ $(document).ready(() => {
             return;
         }
 
-        console.log(e.keyCode);
-
         if (e.keyCode === 8) {
-            Note.backspace();
+            if (e.ctrlKey) {
+                Note.backspaceWord();
+            } else {
+                Note.backspace();
+            }
+        } else if (e.keyCode === 46) {
+            if (e.ctrlKey) {
+                Note.deleteWord();
+            } else {
+                Note.delete();
+            }
         } else if (e.keyCode === 32) {
             Note.add(SANSHIN.PAUSE);
-        } else if (e.keyCode === 46) {
-            Note.delete();
         } else {
             let note = keyMapping[e.keyCode] ? keyMapping[e.keyCode] : keyMapping[e.keyCode + 32];
 
@@ -57,6 +63,11 @@ $(document).ready(() => {
         $('body').focus();
     });
 
+    $notePrototype.click(function() {
+        Pointer.current = $(this).attr('note-index');
+        render();
+    });
+
     const render = () => {
         $noteArea.html('');
         
@@ -64,7 +75,7 @@ $(document).ready(() => {
         Note.toStrArr().forEach(noteStr => {
             $noteArea.append(
                 $notePrototype
-                    .clone()
+                    .clone(true)
                     .html(noteStr)
                     .attr('note-index', index)
             );

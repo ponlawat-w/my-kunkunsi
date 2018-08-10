@@ -20,6 +20,34 @@ const Note = {
             $(Note).trigger('change');
         }
     },
+    backspaceWord: () => {
+        let startIndex = Pointer.current - 1;
+        while (Note.notes[startIndex - 1]) {
+            startIndex--;
+        }
+        if (startIndex < 0) {
+            startIndex = 0;
+        }
+        const size = Pointer.current - startIndex;
+        Note.notes.splice(startIndex, size);
+        Pointer.current -= size;
+        $(Note).trigger('change');
+    },
+    deleteWord: () => {
+        let lastIndex = Pointer.current + 1;
+        while (Note.notes[lastIndex]) {
+            lastIndex++;
+        }
+        if (lastIndex > Note.notes.length) {
+            lastIndex = Note.notes.length;
+        }
+        const size = lastIndex - Pointer.current;
+        if (!size) {
+            return;
+        }
+        Note.notes.splice(Pointer.current, size);
+        $(Note).trigger('change');
+    },
     clear: () => {
         Note.notes = [];
         Pointer.current = 0;
