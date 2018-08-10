@@ -2,6 +2,18 @@
     font-family: "Tahoma", "Helvetica", "MS Gothic";
 }
 
+#menu {
+    margin: 20px 0;
+}
+
+#song-name-div {
+    margin: 5px 0;
+}
+
+#import-div {
+    display: inline-block;
+}
+
 .note {
     display: inline-block;
     font-size: 36px;
@@ -16,8 +28,12 @@
 }
 
 @media print {
+    * {
+        font-family: "MS Mincho";
+    }
+
     body {
-        margin: 20px 30px;
+        margin: 50px 30px;
     }
 
     .no-print, .no-print * {

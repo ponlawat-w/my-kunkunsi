@@ -1,11 +1,23 @@
 $(document).ready(() => {
+    let songName = '';
+    const $songNameSpan = $('#song-name-span');
+    const $songNameInput = $('#song-name-input');
+    const $songNameSubmitBtn = $('#song-name-submit-btn');
+
     const $newBtn = $('#new-btn');
     const $printBtn = $('#print-btn');
+    const $exportBtn = $('#export-btn');
+    const $importFile = $('#import-file');
     const $noteArea = $('#note-area');
     const $notePrototype = $('<div>').addClass('note');
     const $pointerPrototype = $('<div>&nbsp;</div>').addClass('note pointer no-print').attr('id', 'pointer');
 
     const keyMapping = KEY_MAPPING.QWERTY;
+
+    $('button, input').keyup(e => {
+        e.preventDefault();
+        return false;
+    });
 
     $(this).keydown(e => {
         if (e.shiftKey || e.altKey) {
@@ -51,16 +63,35 @@ $(document).ready(() => {
         }
     });
 
-    $newBtn.click(() => {
-        Note.clear();
+    const changeSongName = newName => {
+        songName = newName;
+
+        if (songName.trim()) {
+            $songNameSpan.html(' - ' + songName);
+        } else {
+            $songNameSpan.html('');
+        }
+    };
+
+    $songNameSubmitBtn.click(() => {
+        changeSongName($songNameInput.val());
+        $songNameInput.val('');
     });
 
+    $newBtn.click(Note.clear);
     $printBtn.click(() => {
         window.print();
     });
+    $exportBtn.click(() => {
+        FileIO.export(Note.notes, songName);
+    });
+    $importFile.change(() => {
+        const file = $importFile[0].files[0];
+        const fileName = file.name.split('.');
+        changeSongName(fileName.splice(0, fileName.length - 1).join(''));
 
-    $('button').click(() => {
-        $('body').focus();
+        FileIO.readFile(file)
+        $importFile.val(null);
     });
 
     $notePrototype.click(function() {

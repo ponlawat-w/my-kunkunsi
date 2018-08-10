@@ -7,15 +7,32 @@
         <link rel="stylesheet" type="text/css" href="css/styles.css">
     </head>
     <body>
-        <h1>My工工四</h1>
-        <button id="new-btn" class="no-print">新規</button>
-        <button id="print-btn" class="no-print">印刷</button>
+        <h1>
+            My工工四
+            <span id="song-name-span"></span>
+        </h1>
+        <div id="menu" class="no-print">
+            <div id="song-name-div">
+                <input type="name" id="song-name-input" placeholder="曲名を入れてください。">
+                <button id="song-name-submit-btn">曲名を編集</button>
+            </div>
+            <div>
+                <button id="new-btn">新規</button>
+                <button id="print-btn">印刷</button>
+                <button id="export-btn">ＰＣに保存</button>
+                <div id="import-div">
+                    <input type="file" id="import-file">
+                    ←ファイルを読込
+                </div>
+            </div>
+        </div>
         <div id="note-area"></div>
 
         <script src="js/jquery-3.3.1.min.js"></script>
         <script src="js/map.js"></script>
         <script src="js/note.js"></script>
         <script src="js/pointer.js"></script>
+        <script src="js/file.js"></script>
         <script defer src="js/script.js"></script>
     </body>
 </html>
