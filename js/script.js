@@ -10,7 +10,7 @@ $(document).ready(() => {
     const $importFile = $('#import-file');
     const $noteArea = $('#note-area');
     const $notePrototype = $('<div>').addClass('note');
-    const $pointerPrototype = $('<div>&nbsp;</div>').addClass('note pointer no-print').attr('id', 'pointer');
+    const $pointerPrototype = $('<div>').addClass('pointer no-print').attr('id', 'pointer');
 
     const keyMapping = KEY_MAPPING.QWERTY;
 

@@ -28,8 +28,19 @@
 }
 
 .pointer {
-    padding: 2px 0px;
-    background-color: #000000;
+    display: inline-block;
+    position: absolute;
+    width: 5px;
+    height: 45px;
+    margin-top: 5px;
+    background-color: #0000FF;
+    animation: pointer 800ms steps(2, start) infinite;
+}
+
+@keyframes pointer {
+    to {
+        visibility: hidden;
+    }
 }
 
 @media print {

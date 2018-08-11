@@ -15,6 +15,10 @@ const Pointer = {
     moveWordRight: () => {
         do {
             Pointer.current++;
+
+            if (Note.notes[Pointer.current] >> 4 === 0b1101) {
+                break;
+            }
         } while (Note.notes[Pointer.current]);
 
         if (Pointer.current >= Note.notes.length) {
@@ -25,6 +29,10 @@ const Pointer = {
     moveWordLeft: () => {
         do {
             Pointer.current--;
+
+            if (Note.notes[Pointer.current] >> 4 === 0b1101) {
+                break;
+            }
         } while (Note.notes[Pointer.current - 1]);
 
         if (Pointer.current < 0) {

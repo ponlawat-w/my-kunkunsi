@@ -20,6 +20,10 @@ const SANSHIN = {
         八:   0b00011100,
         九:   0b00011101
     },
+    REPEAT: {
+        START:0b11010000,
+        END:  0b11010001
+    },
     PAUSE:    0b00000000,
     SHARP:    0b10000000,
     FLAT:     0b01000000,
@@ -45,6 +49,8 @@ const KEY_MAPPING = {
         'r': SANSHIN.女.七,
         't': SANSHIN.女.八,
         'y': SANSHIN.女.九,
+        '[': SANSHIN.REPEAT.START,
+        ']': SANSHIN.REPEAT.END,
         32: SANSHIN.PAUSE
     }
 };
