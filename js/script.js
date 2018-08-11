@@ -128,6 +128,10 @@ $(document).ready(() => {
         } else {
             $pointerPrototype.clone().appendTo($noteArea);
         }
+
+        if (!Note.notes.length) {
+            $noteArea.find('.pointer').addClass('relative');
+        }
     
         $('#pointer')[0].scrollIntoView();
     };

@@ -37,6 +37,10 @@
     animation: pointer 800ms steps(2, start) infinite;
 }
 
+.pointer.relative {
+    position: relative !important;
+}
+
 @keyframes pointer {
     to {
         visibility: hidden;
