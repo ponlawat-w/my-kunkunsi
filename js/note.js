@@ -1,13 +1,41 @@
+const NOTE_STR = {
+    0b00000: '〇',
+    0b01000: '合',
+    0b01001: '乙',
+    0b01010: '老',
+    0b01011: '下老',
+    0b10000: '四',
+    0b10001: '上',
+    0b10010: '中',
+    0b10011: '尺',
+    0b10100: '下尺',
+    0b11000: '工',
+    0b11001: '五',
+    0b11010: '六',
+    0b11011: '七',
+    0b11100: '八',
+    0b11101: '九'
+};
+
+const SPECIAL_STR = {
+    0b10000000: '♯',
+    0b01000000: '♭'
+};
+
 const Note = {
     notes: [],
     isValid: note => {
-        if (!note) {
+        if (note == SANSHIN.PAUSE || note == SANSHIN.NEWLINE || note == SANSHIN.END) {
             return true;
         }
 
-        const line = note & 0b00111000;
+        if ((note & 0b11000000) === 0b11000000) {
+            // Invalid SharpFlat
+            return false;
+        }
 
-        if (line != 0b00001000 && line != 0b00010000 && line != 0b00100000) {
+        if (!(note & 0b00011000)) {
+            // Invalid Line
             return false;
         }
 
@@ -25,6 +53,21 @@ const Note = {
         }
         Pointer.moveRight();
         $(Note).trigger('change');
+    },
+    shrink: () => {
+        const index = Pointer.current >= Note.notes.length ? Note.notes.length - 1 : Pointer.current;
+        if (index > -1) {
+            let note = Note.notes[index];
+            const currentMini = note & SANSHIN.MINI;
+            if (currentMini) {
+                note &= ~SANSHIN.MINI;
+            } else {
+                note |= SANSHIN.MINI;
+            }
+
+            Note.notes[index] = note;
+            $(Note).trigger('change');
+        }
     },
     pushFromStream: note => {
         if (!Note.isValid(note)) {
@@ -78,10 +121,10 @@ const Note = {
         $(Note).trigger('change');
     },
     toStr: val => {
-        let note = KEY_NAME[val & 0b00111111];
+        let note = NOTE_STR[val & 0b0011111];
         let sharpFlat = val & 0b11000000;
         if (sharpFlat) {
-            note += KEY_NAME[sharpFlat];
+            note += SPECIAL_STR[sharpFlat];
         }
         return note;
     },

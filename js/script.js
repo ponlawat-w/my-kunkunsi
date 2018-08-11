@@ -45,8 +45,10 @@ $(document).ready(() => {
             }
         } else if (e.keyCode === 32) {
             Note.add(SANSHIN.PAUSE);
+        } else if (e.key === '1') {
+            Note.shrink();
         } else {
-            let note = keyMapping[e.keyCode] ? keyMapping[e.keyCode] : keyMapping[e.keyCode + 32];
+            let note = keyMapping[e.key.toLowerCase()];
 
             if (typeof note !== 'undefined') {
 
@@ -78,7 +80,10 @@ $(document).ready(() => {
         $songNameInput.val('');
     });
 
-    $newBtn.click(Note.clear);
+    $newBtn.click(() => {
+        Note.clear();
+        changeSongName('');
+    });
     $printBtn.click(() => {
         window.print();
     });
@@ -98,27 +103,32 @@ $(document).ready(() => {
         Pointer.current = $(this).attr('note-index');
         render();
     });
-
+    
     const render = () => {
         $noteArea.html('');
-        
+    
         let index = 0;
-        Note.toStrArr().forEach(noteStr => {
-            $noteArea.append(
-                $notePrototype
-                    .clone(true)
-                    .html(noteStr)
-                    .attr('note-index', index)
-            );
+        Note.notes.forEach(note => {
+            const noteString = Note.toStr(note);
+            const $note = $notePrototype
+                            .clone(true)
+                            .html(noteString)
+                            .attr('note-index', index);
+            if (note & SANSHIN.MINI) {
+                $note.addClass('diminutive');
+            }
+    
+            $note.appendTo($noteArea);
+    
             index++;
         });
-
+    
         if (Pointer.current < Note.notes.length) {
             $pointerPrototype.clone().insertBefore($('div.note[note-index=' + Pointer.current + ']'));
         } else {
             $pointerPrototype.clone().appendTo($noteArea);
         }
-
+    
         $('#pointer')[0].scrollIntoView();
     };
 
