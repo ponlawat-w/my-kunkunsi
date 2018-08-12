@@ -9,9 +9,13 @@ $(document).ready(() => {
     const $exportBtn = $('#export-btn');
     const $importFile = $('#import-file');
     const $noteArea = $('#note-area');
-    const $notePrototype = $('<div>').addClass('note');
+    const $blockPrototype = $('#block-prototype');
     const $newLinePrototype = $('<div>').addClass('newline');
     const $pointerPrototype = $('<div>').addClass('pointer no-print').attr('id', 'pointer');
+    const $lyricEditorPrototype = $('#lyric-editor-prototype');
+
+    $blockPrototype.hide();
+    $lyricEditorPrototype.hide();
 
     const keyMapping = KEY_MAPPING.QWERTY;
 
@@ -21,7 +25,8 @@ $(document).ready(() => {
     });
 
     $(this).keydown(e => {
-        if (e.shiftKey || e.altKey || e.keyCode === 38 || e.keyCode === 40) {
+        if (e.shiftKey || e.altKey
+            || e.keyCode == 32 || e.keyCode === 38 || e.keyCode === 40 || e.keyCode === 33 || e.keyCode === 34) {
             return false;
         }
     });
@@ -29,6 +34,10 @@ $(document).ready(() => {
     $(this).keyup(e => {
 
         if (Pointer.keyUp(e)) {
+            return;
+        }
+
+        if (Lyric.keyUp(e)) {
             return;
         }
 
@@ -48,6 +57,8 @@ $(document).ready(() => {
             Note.add(SANSHIN.PAUSE);
         } else if (e.key === '1') {
             Note.shrink();
+        } else if (e.key === '2') {
+            Lyric.openEditor();
         } else if (e.keyCode === 13) {
             Note.add(SANSHIN.NEWLINE);
         } else {
@@ -91,7 +102,7 @@ $(document).ready(() => {
         window.print();
     });
     $exportBtn.click(() => {
-        FileIO.export(Note.notes, songName);
+        FileIO.export(Note.notes, Lyric.lyrics, songName);
     });
     $importFile.change(() => {
         const file = $importFile[0].files[0];
@@ -103,18 +114,20 @@ $(document).ready(() => {
     });
 
     const noteClick = e => {
-        Pointer.current = $(e.target).attr('note-index');
-        render();
+        Pointer.current = $(e.delegateTarget).attr('note-index');
+        if ($(e.target).hasClass('lyric')) {
+            Lyric.openEditor();
+        } else {
+            render();
+        }
     };
 
-    $notePrototype.click(noteClick);
+    $blockPrototype.click(noteClick);
     $newLinePrototype.click(noteClick);
-    
+
     const render = () => {
         $noteArea.html('');
     
-        let index = 0;
-        let $previousNote = null;
         Note.notes.forEach((note, index) => {
             if (note === SANSHIN.NEWLINE) {
                 $newLinePrototype
@@ -122,35 +135,44 @@ $(document).ready(() => {
                     .html('')
                     .attr('note-index', index)
                     .appendTo($noteArea);
-                index++;
                 return true;
             }
 
             const noteString = Note.toStr(note);
-            const $note = $notePrototype
-                            .clone(true)
-                            .html(noteString)
-                            .attr('note-index', index);
+            const $block = $blockPrototype
+                .clone(true)
+                .attr('note-index', index)
+                .attr('id', null);
+            $block.find('.note').html(noteString);
+            $block.show();
 
             if (note & SANSHIN.MINI) {
-                $note.addClass('diminutive');
-                if ($previousNote && $previousNote.length) {
-                    $previousNote.addClass('no-border-right');
+
+                if (Note.isSingleDiminutive(index)) {
+                    $block.addClass('single-diminutive');
+
+                    Block.selectBlock(index - 1).addClass('no-border-right');
+                } else {
+                    $block.addClass('diminutive');
+                }
+            } else if (index > 0) {
+                $previousBlock = Block.selectBlock(index - 1);
+                if ($previousBlock.hasClass('single-diminutive')) {
+                    $block.addClass('no-border-left');
                 }
             }
-            if (index - 1 > 0 && (Note.notes[index - 1] & SANSHIN.MINI)) {
-                $note.addClass('no-border-left');
+
+            const lyric = Lyric.getLyric(index);
+            if (lyric) {
+                $block.find('.lyric').html(lyric);
             }
     
-            $note.appendTo($noteArea);
-            $previousNote = $note;
-    
-            index++;
+            $block.appendTo($noteArea);
         });
     
         let $pointer = $pointerPrototype.clone();
 
-        if (Pointer.current < Note.notes.length && (Note.notes[Pointer.current] & SANSHIN.MINI)) {
+        if (Pointer.current < Note.notes.length && Block.selectBlock(Pointer.current).hasClass('single-diminutive')) {
             $pointer.hide();
         }
 
@@ -161,7 +183,8 @@ $(document).ready(() => {
         }
 
         if (!Note.notes.length ||
-            (Pointer.current === Note.notes.length && Note.notes[Note.notes.length - 1] === SANSHIN.NEWLINE)) {
+            (Pointer.current === Note.notes.length && Note.notes[Note.notes.length - 1] === SANSHIN.NEWLINE) ||
+            (Note.notes[0] & SANSHIN.MINI)) {
             $noteArea.find('.pointer').addClass('relative');
         }
     
@@ -171,4 +194,5 @@ $(document).ready(() => {
     $(Note).change(render);
 
     render();
+    Lyric.init();
 });

@@ -26,17 +26,32 @@
                 </div>
             </div>
         </div>
+        <div id="verse-div" class="no-print">
+            <button id="previous-verse-btn">«</button>
+            <span id="verse-span"></span>
+            <button id="next-verse-btn">»</button>
+        </div>
         <div id="note-area"></div>
         <div class="no-print">
             <hr>
             My工工四 [BETA]。使い方は<a href="https://github.com/ponlawat-w/my-kunkunsi/blob/master/README.md" target="_blank">こちら</a>です。
         </div>
 
+        <div class="block" id="block-prototype">
+            <div class="lyric">&nbsp;</div>
+            <div class="note"></div>
+        </div>
+        <div class="lyric-editor" id="lyric-editor-prototype">
+            <input type="text" id="lyric-input">
+        </div>
+
         <script src="js/jquery-3.3.1.min.js"></script>
         <script src="js/map.js"></script>
         <script src="js/note.js"></script>
+        <script src="js/lyric.js"></script>
         <script src="js/pointer.js"></script>
         <script src="js/file.js"></script>
+        <script src="js/element.js"></script>
         <script defer src="js/script.js"></script>
     </body>
 </html>

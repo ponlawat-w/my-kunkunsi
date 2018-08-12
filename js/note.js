@@ -47,6 +47,19 @@ const Note = {
 
         return true;
     },
+    isSingleDiminutive: index => {
+        if (index < 0 || index >= Note.notes.length) {
+            return false;
+        }
+
+        if (Lyric.getLyric(index)) {
+            return false;
+        }
+
+        return (Note.notes[index] & SANSHIN.MINI)
+            && !(Note.notes[index - 1] & SANSHIN.MINI) 
+            && !(Note.notes[index + 1] & SANSHIN.MINI);
+    },
     add: note => {
         if (!Note.isValid(note)) {
             return;
@@ -54,6 +67,7 @@ const Note = {
 
         if (Pointer.current < Note.notes.length) {
             Note.notes.splice(Pointer.current, 0, note);
+            Lyric.lyrics.splice(Pointer.current, 0, []);
         } else {
             Note.notes.push(note);
         }
@@ -88,12 +102,18 @@ const Note = {
     },
     backspace: () => {
         Note.notes.splice(Pointer.current - 1, 1);
-        Pointer.moveLeft();
+        Lyric.lyrics.splice(Pointer.current - 1, 1);
+
+        Pointer.current--;
+        if (Pointer.current < 0) {
+            Pointer.current = 0;
+        }
         $(Note).trigger('change');
     },
     delete: () => {
         if (Pointer.current < Note.notes.length) {
             Note.notes.splice(Pointer.current, 1);
+            Lyric.lyrics.splice(Pointer.current, 1);
             $(Note).trigger('change');
         }
     },
@@ -109,6 +129,7 @@ const Note = {
         }
         const size = Pointer.current - startIndex;
         Note.notes.splice(startIndex, size);
+        Lyric.lyrics.splice(startIndex, size);
         Pointer.current -= size;
         $(Note).trigger('change');
     },
@@ -127,10 +148,12 @@ const Note = {
             return;
         }
         Note.notes.splice(Pointer.current, size);
+        Lyric.lyrics.splice(Pointer.current, size);
         $(Note).trigger('change');
     },
     clear: () => {
         Note.notes = [];
+        Lyric.lyrics = [];
         Pointer.current = 0;
         $(Note).trigger('change');
     },

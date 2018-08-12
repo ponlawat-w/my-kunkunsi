@@ -14,47 +14,79 @@
     display: inline-block;
 }
 
-.note {
+.block {
+    margin: 3px 0;
+    padding: 0;
     display: inline-block;
+    width: 86px;
+}
+
+.block .lyric {
+    width: 100%;
+    padding: 2px 0;
+    margin: 0;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    border-top: 1px solid #e5e5e5;
+}
+
+.block .lyric input {
+    width: 82px;
+}
+
+.block .note {
     font-size: 32px;
     padding: 2px 0;
     margin: 3px 0;
-    width: 87px;
+    width: 100%;
+    vertical-align: bottom;
     text-align: center;
     overflow: hidden;
     white-space: nowrap;
     border: 1px solid #000000;
 }
 
-.note.no-border-left {
-    border-left-color: #EDEDED;
+.block.no-border-left .note {
+    border-left-color: #ededed;
 }
 
-.note.no-border-right {
-    border-right-color: #EDEDED;
+.block.no-border-right .note {
+    border-right-color: #ededed;
 }
 
-.note.diminutive {
-    width: 60px;
+.block.diminutive .note {
+    padding-top: 17px;
+    font-size: 20px;
+}
+
+.block.single-diminutive {
     position: absolute;
-    margin-top: 18px;
-    margin-left: -30px;
-    font-size: 24px;
-    border: none;
+    margin-left: -43px;
+    margin-top: 45px;
 }
 
-.pointer+.diminutive {
-    background-color: rgba(0, 0, 255, 0.5);
+.block.single-diminutive .lyric {
+    display: none;
+}
+
+.block.single-diminutive .note {
+    font-size: 20px;
+    border: none;
 }
 
 .pointer {
     display: inline-block;
     position: absolute;
-    width: 5px;
-    height: 45px;
-    margin-top: 5px;
+    width: 3px;
+    height: 72px;
+    margin-top: 3px;
     background-color: #0000FF;
     animation: pointer 800ms steps(2, start) infinite;
+}
+
+.pointer+.block.single-diminutive {
+    background-color: rgba(0, 0, 255, 0.5);
 }
 
 .pointer.relative {
@@ -83,5 +115,9 @@
 
     .no-print, .no-print * {
         display: none !important;
+    }
+
+    .block.single-diminutive {
+        margin-top: 40px;
     }
 }
