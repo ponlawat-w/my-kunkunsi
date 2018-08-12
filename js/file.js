@@ -16,7 +16,7 @@ const FileIO = {
         let arrayBuffer = new Uint8Array(data);
         Note.notes = [];
         arrayBuffer.forEach(note => Note.pushFromStream(note));
-        Pointer.toLast();
+        Pointer.current = Note.notes.length;
         $(Note).trigger('change');
     },
     readFile: file => {

@@ -10,6 +10,7 @@ $(document).ready(() => {
     const $importFile = $('#import-file');
     const $noteArea = $('#note-area');
     const $notePrototype = $('<div>').addClass('note');
+    const $newLinePrototype = $('<div>').addClass('newline');
     const $pointerPrototype = $('<div>').addClass('pointer no-print').attr('id', 'pointer');
 
     const keyMapping = KEY_MAPPING.QWERTY;
@@ -20,7 +21,7 @@ $(document).ready(() => {
     });
 
     $(this).keydown(e => {
-        if (e.shiftKey || e.altKey) {
+        if (e.shiftKey || e.altKey || e.keyCode === 38 || e.keyCode === 40) {
             return false;
         }
     });
@@ -47,6 +48,8 @@ $(document).ready(() => {
             Note.add(SANSHIN.PAUSE);
         } else if (e.key === '1') {
             Note.shrink();
+        } else if (e.keyCode === 13) {
+            Note.add(SANSHIN.NEWLINE);
         } else {
             let note = keyMapping[e.key.toLowerCase()];
 
@@ -99,41 +102,70 @@ $(document).ready(() => {
         $importFile.val(null);
     });
 
-    $notePrototype.click(function() {
-        Pointer.current = $(this).attr('note-index');
+    const noteClick = e => {
+        Pointer.current = $(e.target).attr('note-index');
         render();
-    });
+    };
+
+    $notePrototype.click(noteClick);
+    $newLinePrototype.click(noteClick);
     
     const render = () => {
         $noteArea.html('');
     
         let index = 0;
-        Note.notes.forEach(note => {
+        let $previousNote = null;
+        Note.notes.forEach((note, index) => {
+            if (note === SANSHIN.NEWLINE) {
+                $newLinePrototype
+                    .clone(true)
+                    .html('')
+                    .attr('note-index', index)
+                    .appendTo($noteArea);
+                index++;
+                return true;
+            }
+
             const noteString = Note.toStr(note);
             const $note = $notePrototype
                             .clone(true)
                             .html(noteString)
                             .attr('note-index', index);
+
             if (note & SANSHIN.MINI) {
                 $note.addClass('diminutive');
+                if ($previousNote && $previousNote.length) {
+                    $previousNote.addClass('no-border-right');
+                }
+            }
+            if (index - 1 > 0 && (Note.notes[index - 1] & SANSHIN.MINI)) {
+                $note.addClass('no-border-left');
             }
     
             $note.appendTo($noteArea);
+            $previousNote = $note;
     
             index++;
         });
     
-        if (Pointer.current < Note.notes.length) {
-            $pointerPrototype.clone().insertBefore($('div.note[note-index=' + Pointer.current + ']'));
-        } else {
-            $pointerPrototype.clone().appendTo($noteArea);
+        let $pointer = $pointerPrototype.clone();
+
+        if (Pointer.current < Note.notes.length && (Note.notes[Pointer.current] & SANSHIN.MINI)) {
+            $pointer.hide();
         }
 
-        if (!Note.notes.length) {
+        if (Pointer.current < Note.notes.length) {
+            $pointer.insertBefore($noteArea.find('div[note-index=' + Pointer.current + ']'));
+        } else {
+            $pointer.clone().appendTo($noteArea);
+        }
+
+        if (!Note.notes.length ||
+            (Pointer.current === Note.notes.length && Note.notes[Note.notes.length - 1] === SANSHIN.NEWLINE)) {
             $noteArea.find('.pointer').addClass('relative');
         }
     
-        $('#pointer')[0].scrollIntoView();
+        $pointer[0].scrollIntoView();
     };
 
     $(Note).change(render);

@@ -99,7 +99,9 @@ const Note = {
     },
     backspaceWord: () => {
         let startIndex = Pointer.current - 1;
-        while (Note.notes[startIndex - 1] && Note.notes[startIndex - 1] >> 4 !== 0b1101) {
+        while (Note.notes[startIndex - 1]
+            && Note.notes[startIndex - 1] >> 4 !== 0b1101
+            && Note.notes[startIndex - 1] !== SANSHIN.NEWLINE) {
             startIndex--;
         }
         if (startIndex < 0) {
@@ -112,7 +114,9 @@ const Note = {
     },
     deleteWord: () => {
         let lastIndex = Pointer.current + 1;
-        while (Note.notes[lastIndex] && Note.notes[lastIndex] >> 4 !== 0b1101) {
+        while (Note.notes[lastIndex]
+            && Note.notes[lastIndex] >> 4 !== 0b1101
+            && Note.notes[lastIndex] !== SANSHIN.NEWLINE) {
             lastIndex++;
         }
         if (lastIndex > Note.notes.length) {
@@ -131,7 +135,7 @@ const Note = {
         $(Note).trigger('change');
     },
     toStr: val => {
-        if (val >> 4 == 0b1101) {
+        if (val >> 4 === 0b1101 || val === SANSHIN.NEWLINE) {
             // Repeat mark
             return SPECIAL_STR[val];
         }
